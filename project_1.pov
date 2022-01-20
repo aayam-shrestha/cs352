@@ -51,14 +51,14 @@ plane { // Background Plane
         color White
     }
     finish {
-  phong 0.9
-  phong_size 60
-  metallic
-  reflection{
-      1
-      metallic
-  }
-  }
+        phong 0.9
+        phong_size 60
+        metallic
+        reflection{
+            1
+            metallic
+        }
+    }
     rotate <90, 90, 0>
     translate<25, 0, 35>
 }
@@ -69,50 +69,51 @@ plane { // Background Plane
         color White
     }
     finish {
-  phong 0.9
-  phong_size 60
-  metallic
-  reflection{
-      1
-      metallic
-  }
-  }
+        phong 0.9
+        phong_size 60
+        metallic
+        reflection{
+            1
+            metallic
+        }
+    }
     rotate <90, 160, 0>
     translate<25, 0, 35>
 }
 
-box {   // Lower, yellow half of the body
-    <-3.5, -3.5, -3.5>, <3.5, 3.5, 3.5>
-    texture{
-        pigment{ color <0.9, 0.47, 0>}
-    }
-    normal { bumps 0.01 scale 2 }
-    finish {
-        ambient .1
-        diffuse .1
-        specular 1
-        roughness .6
-        metallic
-        reflection {
-          .1
-          metallic
+#declare body = union { // Body
+    box {   // Lower, yellow half of the body
+        <-3.5, -3.5, -3.5>, <3.5, 3.5, 3.5>
+        texture{
+            pigment{ color <0.9, 0.47, 0>}
         }
-     }
-    translate y*4.5
-}
-
-box {   // Upper, metallic half of body
-    <-3.51, -1, -3.51>, <3.51, 1.5, 3.51>
-    texture{
-        Brushed_Aluminum
+        normal { bumps 0.01 scale 2 }
+        finish {
+            ambient .1
+            diffuse .1
+            specular 1
+            roughness .6
+            metallic
+            reflection {
+            .1
+            metallic
+            }
+        }
+        translate y*4.5
     }
-    finish{
-        ambient 0.01
-        diffuse 0.5
-        phong 0.2
-        roughness 0.03
+    box {   // Upper, metallic half of body
+        <-3.51, -1, -3.51>, <3.51, 1.5, 3.51>
+        texture{
+            Brushed_Aluminum
+        }
+        finish{
+            ambient 0.01
+            diffuse 0.5
+            phong 0.2
+            roughness 0.03
+        }
+        translate y*6.51
     }
-    translate y*6.51
 }
 
 #declare left_tread_cylinders = union {
@@ -421,6 +422,7 @@ box {   // Right arm
     translate<4, 5.8, -5.8>
 }
 
+body
 treads
 neck
 head

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>The Bat</title>
+    <link rel="stylesheet" type="text/css" href="proj_2.css" />
+  </head>
+  <body>
+    <div id="mainWindow">
+      <h3 class="titleBar">Secret Identity</h3>
+
+      <div id="controls">
+        <div id="sliderdiv">
+          <p id="slidertitle">Threat level</p>
+          <input id="slider1" type="range" min="0" max="100" value="0" />
+          <p id="pointcountpar"><span id="pointcount">0</span> %</p>
+        </div>
+        <button id="erasebutton" type="submit">Reset</button>
+        <button id="drawbutton" type="submit">Reveal secret identity</button>
+      </div>
+
+      <canvas id="canvas1" width="450" height="342">
+        <p>Your browser doesn't support the HTML5 canvas element.</p>
+      </canvas>
+    </div>
+
+    <!-- javascript, loaded at the end to make the page appear faster -->
+    <script
+      type="text/javascript"
+      src="https://cs.calvin.edu/curriculum/cs/352/files/js/jquery-1.4.4.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cs.calvin.edu/curriculum/cs/352/files/js/sylvester.js"
+    ></script>
+    <script type="text/javascript" src="proj_2.js"></script>
+  </body>
+</html>

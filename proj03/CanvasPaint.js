@@ -12,10 +12,13 @@ $(document).ready(function () {
 });
 
 var cpaint = {
+  drawMode: "free",
   drawing: false,
   tool: "marker",
   lineThickness: 12,
   color: "#333399",
+  initialX: 0,
+  initialY: 0,
 };
 
 cpaint.init = function () {
@@ -39,7 +42,9 @@ cpaint.init = function () {
   $("#widthSlider").bind("change", cpaint.thicknessChange);
   $("#clearButton").bind("click", cpaint.clear);
   $("#eraserButton").bind("click", cpaint.erase);
-  $("#markerButton").bind("click", cpaint.colorChange);
+  $("#markerButton").bind("click", cpaint.selectMarker);
+  $("#lineButton").bind("click", cpaint.selectLine);
+  $("#rectButton").bind("click", cpaint.selectRect);
 
   // bind menu options
   $("#menuClear").bind("click", cpaint.clear);
@@ -70,15 +75,32 @@ cpaint.drawStart = function (ev) {
     cpaint.canvas.height
   );
   // save drawing window contents
-  cpaint.cx.moveTo(x, y);
-  cpaint.cx.lineTo(x, y);
-  cpaint.cx.stroke();
+  if (cpaint.drawMode == "free") {
+    cpaint.cx.moveTo(x, y);
+    cpaint.cx.lineTo(x, y);
+    cpaint.cx.stroke();
+  } else if (cpaint.drawMode == "line" || cpaint.drawMode == "rect") {
+    cpaint.initialX = x;
+    cpaint.initialY = y;
+  }
 };
 
 /*
  * handle mouseup events
  */
 cpaint.drawEnd = function (ev) {
+  var x, y; // convert event coords to (0,0) at top left of canvas
+  x = ev.pageX - $(cpaint.canvas).offset().left;
+  y = ev.pageY - $(cpaint.canvas).offset().top;
+  ev.preventDefault();
+
+  cpaint.cx.lineWidth = cpaint.lineThickness;
+  cpaint.cx.strokeStyle = cpaint.color;
+  // if (cpaint.drawMode == "line") {
+  //   cpaint.cx.moveTo(cpaint.initialX, cpaint.initialY);
+  //   cpaint.cx.lineTo(x, y);
+  //   cpaint.cx.stroke();
+  // }
   cpaint.drawing = false;
   cpaint.cx.beginPath();
 };
@@ -91,12 +113,47 @@ cpaint.draw = function (ev) {
   x = ev.pageX - $(cpaint.canvas).offset().left;
   y = ev.pageY - $(cpaint.canvas).offset().top;
 
+  if (cpaint.drawMode == "free") cpaint.drawMarker(x, y);
+  else if (cpaint.drawMode == "line") cpaint.drawLine(x, y);
+  else if (cpaint.drawMode == "rect") cpaint.drawRect(x, y);
+};
+
+cpaint.drawMarker = function (x, y) {
   if (cpaint.drawing) {
     cpaint.cx.lineCap = "round";
     cpaint.cx.lineTo(x, y);
     cpaint.cx.stroke();
     cpaint.cx.beginPath(); // draw initial stroke
     cpaint.cx.moveTo(x, y);
+  }
+};
+
+cpaint.drawLine = function (x, y) {
+  if (cpaint.drawing) {
+    cpaint.cx.lineCap = "round";
+    cpaint.cx.clearRect(0, 0, cpaint.canvas.width, cpaint.canvas.height); // clear screen
+    cpaint.cx.putImageData(cpaint.imgData, 0, 0); // restore previous picture
+    cpaint.cx.beginPath();
+    cpaint.cx.moveTo(cpaint.initialX, cpaint.initialY);
+    cpaint.cx.lineTo(x, y);
+    cpaint.cx.stroke();
+    cpaint.cx.closePath();
+  }
+};
+
+cpaint.drawRect = function (x, y) {
+  if (cpaint.drawing) {
+    // cpaint.cx.lineCap = "round";
+    // cpaint.cx.lineWidth = cpaint.lineThickness;
+    cpaint.cx.fillStyle = cpaint.color;
+    cpaint.cx.clearRect(0, 0, cpaint.canvas.width, cpaint.canvas.height); // clear screen
+    cpaint.cx.putImageData(cpaint.imgData, 0, 0); // restore previous picture
+    cpaint.cx.fillRect(
+      cpaint.initialX,
+      cpaint.initialY,
+      x - cpaint.initialX,
+      y - cpaint.initialY
+    );
   }
 };
 
@@ -115,11 +172,35 @@ cpaint.clear = function (ev) {
 };
 
 /*
+ * line tool handler
+ */
+cpaint.selectLine = function (ev) {
+  $("#messages").prepend("Line tool selected<br>");
+  cpaint.drawMode = "line";
+  cpaint.colorChange();
+};
+
+/*
+ * rectangle tool handler
+ */
+cpaint.selectRect = function (ev) {
+  $("#messages").prepend("Rectangle tool selected<br>");
+  cpaint.drawMode = "rect";
+  cpaint.colorChange();
+};
+
+/*
  * color picker widget handler
  */
 cpaint.colorChange = function (ev) {
   $("#messages").prepend("Color: " + $("#color1").val() + "<br>");
   cpaint.color = $("#color1").val();
+};
+
+cpaint.selectMarker = function () {
+  $("#messages").prepend("Marker selected<br>");
+  cpaint.drawMode = "free";
+  cpaint.colorChange();
 };
 
 /*
@@ -136,6 +217,7 @@ cpaint.thicknessChange = function (ev) {
 cpaint.erase = function (ev) {
   $("#messages").prepend("Erasing<br>");
   cpaint.color = $("#canvas1").css("backgroundColor");
+  cpaint.drawMode = "free";
 };
 
 /*

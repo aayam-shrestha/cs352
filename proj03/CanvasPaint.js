@@ -323,30 +323,39 @@ cpaint.blur = function (ev) {
   cpaint.blur = new ImageData(cpaint.canvas.width, cpaint.canvas.height);
 
   var pix = cpaint.imgData.data;
-  var currentWidth = 4 * cpaint.canvas.width;
-  var newPix = 0;
-  var blurWeight = 1 / 9;
+  var blurMatrix = [
+    [1 / 9, 1 / 9, 1 / 9],
+    [1 / 9, 1 / 9, 1 / 9],
+    [1 / 9, 1 / 9, 1 / 9],
+  ];
+  var red = 0,
+    green = 0,
+    blue = 0,
+    alpha = 0;
 
-  //looping through a single color channel
-  for (var i = 1; i < pix.length - 1; i += 1) {
-    // Top row pixels
-    newPix += blurWeight * pix[i - currentWidth - 4];
-    newPix += blurWeight * pix[i - currentWidth];
-    newPix += blurWeight * pix[i - currentWidth + 4];
+  for (var row = 0; row < cpaint.canvas.height; row += 1) {
+    for (var col = 0; col < cpaint.canvas.width; col += 1) {
+      var destNum = 4 * row * cpaint.canvas.width + col * 4;
+      for (var y = 0; y < 3; y += 1) {
+        for (var x = 0; x < 3; x += 1) {
+          var sourceNum =
+            4 * (row - 1 + y) * cpaint.canvas.width + (col - 1 + x) * 4;
+          red += pix[sourceNum] * blurMatrix[x][y];
+          green += pix[sourceNum + 1] * blurMatrix[x][y];
+          blue += pix[sourceNum + 2] * blurMatrix[x][y];
+          alpha += pix[sourceNum + 3] * blurMatrix[x][y];
+        }
+      }
+      cpaint.blur.data[destNum] = red;
+      cpaint.blur.data[destNum + 1] = green;
+      cpaint.blur.data[destNum + 2] = blue;
+      cpaint.blur.data[destNum + 3] = alpha;
 
-    // Middle row pixels
-    newPix += blurWeight * pix[i - 4];
-    newPix += blurWeight * pix[i];
-    newPix += blurWeight * pix[i + 4];
-
-    //Bottom row pixels
-    newPix += blurWeight * pix[i + currentWidth - 4];
-    newPix += blurWeight * pix[i + currentWidth];
-    newPix += blurWeight * pix[i + currentWidth + 4];
-
-    cpaint.blur.data[i] = newPix;
-
-    newPix = 0;
+      red = 0;
+      blue = 0;
+      green = 0;
+      alpha = 0;
+    }
   }
   cpaint.cx.putImageData(cpaint.blur, 0, 0);
 };
@@ -362,34 +371,123 @@ cpaint.sharpen = function (ev) {
   cpaint.sharpen = new ImageData(cpaint.canvas.width, cpaint.canvas.height);
 
   var pix = cpaint.imgData.data;
-  var currentWidth = 4 * cpaint.canvas.width;
-  var newPix = 0;
-  var sharpenWeight = -1 / 8;
+  var sharpenMatrix = [
+    [-1 / 8, -1 / 8, -1 / 8],
+    [-1 / 8, 2, -1 / 8],
+    [-1 / 8, -1 / 8, -1 / 8],
+  ];
+  var red = 0,
+    green = 0,
+    blue = 0,
+    alpha = 0;
 
-  //looping through a single color channel
-  for (var i = 1; i < pix.length - 1; i += 1) {
-    // Top row pixels
-    newPix += sharpenWeight * pix[i - currentWidth - 4];
-    newPix += sharpenWeight * pix[i - currentWidth];
-    newPix += sharpenWeight * pix[i - currentWidth + 4];
+  for (var row = 0; row < cpaint.canvas.height; row += 1) {
+    for (var col = 0; col < cpaint.canvas.width; col += 1) {
+      var destNum = 4 * row * cpaint.canvas.width + col * 4;
+      for (var y = 0; y < 3; y += 1) {
+        for (var x = 0; x < 3; x += 1) {
+          var sourceNum =
+            4 * (row - 1 + y) * cpaint.canvas.width + (col - 1 + x) * 4;
+          red += pix[sourceNum] * sharpenMatrix[x][y];
+          green += pix[sourceNum + 1] * sharpenMatrix[x][y];
+          blue += pix[sourceNum + 2] * sharpenMatrix[x][y];
+          alpha += pix[sourceNum + 3] * sharpenMatrix[x][y];
+        }
+      }
+      cpaint.sharpen.data[destNum] = red;
+      cpaint.sharpen.data[destNum + 1] = green;
+      cpaint.sharpen.data[destNum + 2] = blue;
+      cpaint.sharpen.data[destNum + 3] = alpha;
 
-    // Middle row pixels
-    newPix += sharpenWeight * pix[i - 4];
-    newPix += 2 * pix[i];
-    newPix += sharpenWeight * pix[i + 4];
-
-    //Bottom row pixels
-    newPix += sharpenWeight * pix[i + currentWidth - 4];
-    newPix += sharpenWeight * pix[i + currentWidth];
-    newPix += sharpenWeight * pix[i + currentWidth + 4];
-
-    cpaint.sharpen.data[i] = newPix;
-
-    newPix = 0;
+      red = 0;
+      blue = 0;
+      green = 0;
+      alpha = 0;
+    }
   }
   cpaint.cx.putImageData(cpaint.sharpen, 0, 0);
 };
 
 cpaint.detectEdges = function (ev) {
   $("#messages").prepend("Detect Edges<br>");
+  cpaint.imgData = cpaint.cx.getImageData(
+    0,
+    0,
+    cpaint.canvas.width,
+    cpaint.canvas.height
+  );
+  cpaint.edges = new ImageData(cpaint.canvas.width, cpaint.canvas.height);
+  var pix = cpaint.imgData.data;
+
+  var sobelX = [
+    [-1, 0, 1],
+    [-2, 0, 2],
+    [-1, 0, 1],
+  ];
+
+  var sobelY = [
+    [1, 2, 1],
+    [0, 0, 0],
+    [-1, -2, -1],
+  ];
+
+  var redX = 0,
+    greenX = 0,
+    blueX = 0,
+    alphaX = 0;
+  var redY = 0,
+    greenY = 0,
+    blueY = 0,
+    alphaY = 0;
+  var finalRed = 0,
+    finalGreen = 0,
+    finalBlue = 0,
+    finalAlpha = 0;
+  for (var row = 0; row < cpaint.canvas.height; row += 1) {
+    for (var col = 0; col < cpaint.canvas.width; col += 1) {
+      var destNum = 4 * row * cpaint.canvas.width + col * 4;
+      for (var y = 0; y < 3; y += 1) {
+        for (var x = 0; x < 3; x += 1) {
+          var sourceNum =
+            4 * (row - 1 + y) * cpaint.canvas.width + (col - 1 + x) * 4;
+          redX += pix[sourceNum] * sobelX[x][y];
+          greenX += pix[sourceNum + 1] * sobelX[x][y];
+          blueX += pix[sourceNum + 2] * sobelX[x][y];
+          alphaX += pix[sourceNum + 3] * sobelX[x][y];
+
+          redY += pix[sourceNum] * sobelY[x][y];
+          greenY += pix[sourceNum + 1] * sobelY[x][y];
+          blueY += pix[sourceNum + 2] * sobelY[x][y];
+          alphaY += pix[sourceNum + 3] * sobelY[x][y];
+        }
+      }
+      finalRed = Math.sqrt(redX ** 2 + redY ** 2);
+      finalGreen = Math.sqrt(greenX ** 2 + greenY ** 2);
+      finalBlue = Math.sqrt(blueX ** 2 + blueY ** 2);
+      finalAlpha = Math.sqrt(alphaX ** 2 + alphaY ** 2);
+
+      if ((finalRed + finalGreen + finalBlue) / 3 > 80) {
+        cpaint.edges.data[destNum] = 255;
+        cpaint.edges.data[destNum + 1] = 255;
+        cpaint.edges.data[destNum + 2] = 255;
+        cpaint.edges.data[destNum + 3] = 255;
+      } else {
+        cpaint.edges.data[destNum] = 0;
+        cpaint.edges.data[destNum + 1] = 0;
+        cpaint.edges.data[destNum + 2] = 0;
+        cpaint.edges.data[destNum + 3] = 255;
+      }
+
+      redX = 0;
+      redY = 0;
+      blueX = 0;
+      blueY = 0;
+      greenX = 0;
+      greenY = 0;
+      alphaX = 0;
+      alphaY = 0;
+    }
+  }
+
+  cpaint.cx.putImageData(cpaint.edges, 0, 0);
 };

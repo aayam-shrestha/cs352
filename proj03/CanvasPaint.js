@@ -51,6 +51,9 @@ cpaint.init = function () {
   $("#menuNew").bind("click", cpaint.clear);
   $("#menuFade").bind("click", cpaint.fade);
   $("#menuUnfade").bind("click", cpaint.unfade);
+  $("#menuBlur").bind("click", cpaint.blur);
+  $("#menuSharpen").bind("click", cpaint.sharpen);
+  $("#menuDetectEdges").bind("click", cpaint.detectEdges);
   $("#menuOpen").bind("click", cpaint.open);
   $("#menuSave").bind("click", cpaint.save);
   $("#toolBar").show(); // when toolbar is initialized, make it visible
@@ -301,8 +304,92 @@ cpaint.unfade = function (ev) {
     cpaint.canvas.height
   );
   var pix = cpaint.imgData.data;
+  console.log(pix.length);
+  console.log(cpaint.imgData.height * cpaint.imgData.width * 4);
   for (var i = 0; i < pix.length; i += 4) {
     pix[i + 3] *= 2; // increase alpha of each pixel
   }
   cpaint.cx.putImageData(cpaint.imgData, 0, 0);
+};
+
+cpaint.blur = function (ev) {
+  $("#messages").prepend("Blur<br>");
+  cpaint.imgData = cpaint.cx.getImageData(
+    0,
+    0,
+    cpaint.canvas.width,
+    cpaint.canvas.height
+  );
+  cpaint.blur = new ImageData(cpaint.canvas.width, cpaint.canvas.height);
+
+  var pix = cpaint.imgData.data;
+  var currentWidth = 4 * cpaint.canvas.width;
+  var newPix = 0;
+  var blurWeight = 1 / 9;
+
+  //looping through a single color channel
+  for (var i = 1; i < pix.length - 1; i += 1) {
+    // Top row pixels
+    newPix += blurWeight * pix[i - currentWidth - 4];
+    newPix += blurWeight * pix[i - currentWidth];
+    newPix += blurWeight * pix[i - currentWidth + 4];
+
+    // Middle row pixels
+    newPix += blurWeight * pix[i - 4];
+    newPix += blurWeight * pix[i];
+    newPix += blurWeight * pix[i + 4];
+
+    //Bottom row pixels
+    newPix += blurWeight * pix[i + currentWidth - 4];
+    newPix += blurWeight * pix[i + currentWidth];
+    newPix += blurWeight * pix[i + currentWidth + 4];
+
+    cpaint.blur.data[i] = newPix;
+
+    newPix = 0;
+  }
+  cpaint.cx.putImageData(cpaint.blur, 0, 0);
+};
+
+cpaint.sharpen = function (ev) {
+  $("#messages").prepend("Sharpen<br>");
+  cpaint.imgData = cpaint.cx.getImageData(
+    0,
+    0,
+    cpaint.canvas.width,
+    cpaint.canvas.height
+  );
+  cpaint.sharpen = new ImageData(cpaint.canvas.width, cpaint.canvas.height);
+
+  var pix = cpaint.imgData.data;
+  var currentWidth = 4 * cpaint.canvas.width;
+  var newPix = 0;
+  var sharpenWeight = -1 / 8;
+
+  //looping through a single color channel
+  for (var i = 1; i < pix.length - 1; i += 1) {
+    // Top row pixels
+    newPix += sharpenWeight * pix[i - currentWidth - 4];
+    newPix += sharpenWeight * pix[i - currentWidth];
+    newPix += sharpenWeight * pix[i - currentWidth + 4];
+
+    // Middle row pixels
+    newPix += sharpenWeight * pix[i - 4];
+    newPix += 2 * pix[i];
+    newPix += sharpenWeight * pix[i + 4];
+
+    //Bottom row pixels
+    newPix += sharpenWeight * pix[i + currentWidth - 4];
+    newPix += sharpenWeight * pix[i + currentWidth];
+    newPix += sharpenWeight * pix[i + currentWidth + 4];
+
+    cpaint.sharpen.data[i] = newPix;
+
+    newPix = 0;
+  }
+  cpaint.cx.putImageData(cpaint.sharpen, 0, 0);
+};
+
+cpaint.detectEdges = function (ev) {
+  $("#messages").prepend("Detect Edges<br>");
 };

@@ -59,9 +59,7 @@
 
       <div id="toolBar">
         <div id="tools">
-          <div class="toolbarCell radio1 selected" id="markerButton">
-            &nbsp;
-          </div>
+          <div class="toolbarCell radio1" id="markerButton">&nbsp;</div>
           <div class="toolbarCell radio1" id="lineButton">&nbsp;</div>
           <div class="toolbarCell radio1" id="rectButton">&nbsp;</div>
           <div class="toolbarCell radio1" id="eraserButton">&nbsp;</div>
@@ -69,6 +67,7 @@
             <input id="color1" type="text" name="color1" value="#333399" />
           </div>
           <div class="toolbarCell" id="width">
+            <canvas id="sliderCanvas" width="42" height="28"></canvas>
             <input type="range" id="widthSlider" min="1" max="40" value="12" />
           </div>
           <div class="toolbarCell" id="clearButton">&nbsp;</div>

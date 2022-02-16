@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Animation</title>
+    <link rel="stylesheet" type="text/css" href="train.css" />
+</head>
+<body>
+    <div id="mainWindow">
+        <h3 class="titleBar">Wonderful Widget</h3>
+        
+        <div id="controls">
+            <div id="sliderdiv">
+                <p id="slidertitle">Speed</p>
+                <input id="slider1" type="range" min="0" max="100" value="5"/>
+
+                <p id="pointcountpar">Speed: <span id="pointcount">5</span></p>
+                <p id="timecountpar">Time: <span id="timecount">0</span></p>
+
+            </div>
+            <button id="gobutton" type="submit">Go</button>
+            <button id="stopbutton" type="submit">Stop</button>
+            <!-- <button id="stopbutton" type="subtim">Step</button> -->
+        </div>
+        <canvas id="canvas1" width="915" height="540">
+            <p>Your browser doesn't support the HTML5 canvas element</p>
+        </canvas>
+    </div>
+
+    <div id="messageWindow">
+        <h3 class="titleBar">Messages</h3>
+        <div id="messages"></div>
+    </div>
+
+    <!-- javascript, loaded at the end to make the page appear faster -->
+    <script type="text/javascript" src="https://cs.calvin.edu/curriculum/cs/352/files/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="https://cs.calvin.edu/curriculum/cs/352/files/js/sylvester.js"></script>
+    <script type="text/javascript" src="train.js"></script>
+</body>
+</html>

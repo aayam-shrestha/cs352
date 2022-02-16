@@ -195,6 +195,12 @@ cpaint.clear = function (ev) {
 cpaint.selectLine = function (ev) {
   $("#messages").prepend("Line tool selected<br>");
   cpaint.drawMode = "line"; // change selected tool to line
+  cpaint.imgData = cpaint.cx.getImageData(
+    0,
+    0,
+    cpaint.canvas.width,
+    cpaint.canvas.height
+  );
   cpaint.colorChange();
 };
 
@@ -204,6 +210,12 @@ cpaint.selectLine = function (ev) {
 cpaint.selectRect = function (ev) {
   $("#messages").prepend("Rectangle tool selected<br>");
   cpaint.drawMode = "rect"; // change selected tool to rectangle
+  cpaint.imgData = cpaint.cx.getImageData(
+    0,
+    0,
+    cpaint.canvas.width,
+    cpaint.canvas.height
+  );
   cpaint.colorChange();
 };
 
@@ -220,6 +232,12 @@ cpaint.colorChange = function (ev) {
 cpaint.selectMarker = function () {
   $("#messages").prepend("Marker selected<br>");
   cpaint.drawMode = "free"; // change selected tool to marker
+  cpaint.imgData = cpaint.cx.getImageData(
+    0,
+    0,
+    cpaint.canvas.width,
+    cpaint.canvas.height
+  );
   cpaint.colorChange();
 };
 
@@ -278,10 +296,12 @@ cpaint.loadFile = function () {
     cpaint.cx.clearRect(0, 0, cpaint.canvas.width, cpaint.canvas.height);
     cpaint.cx.drawImage(img, 0, 0, cpaint.canvas.width, cpaint.canvas.height);
   };
-};
-
-cpaint.closeDialog = function () {
-  $("#fileInput").hide();
+  cpaint.imgData = cpaint.cx.getImageData(
+    0,
+    0,
+    cpaint.canvas.width,
+    cpaint.canvas.height
+  );
 };
 
 /*
@@ -387,6 +407,10 @@ cpaint.blur = function (ev) {
       cpaint.blur.data[destNum + 1] = green;
       cpaint.blur.data[destNum + 2] = blue;
       cpaint.blur.data[destNum + 3] = alpha;
+      // cpaint.imgData.data[destNum] = red;
+      // cpaint.imgData.data[destNum + 1] = green;
+      // cpaint.imgData.data[destNum + 2] = blue;
+      // cpaint.imgData.data[destNum + 3] = alpha;
 
       red = 0;
       blue = 0;
@@ -395,6 +419,7 @@ cpaint.blur = function (ev) {
     }
   }
   cpaint.cx.putImageData(cpaint.blur, 0, 0);
+  // cpaint.cx.putImageData(cpaint.imgData, 0, 0);
 };
 
 cpaint.sharpen = function (ev) {

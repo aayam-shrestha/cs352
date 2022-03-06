@@ -1,5 +1,6 @@
 body {
     background-color:#99c;
+    background-image: -webkit-gradient: linear-gradient(#FFFFFF, #8FA5CE);
 }
 
 #mainWindow {

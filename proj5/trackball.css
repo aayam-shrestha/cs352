@@ -1,9 +1,9 @@
 body {
-    background-color:#082eaa;
+    background-color:#99c;
 }
 
 #mainWindow {
-    background-color:rgb(221, 221, 221);
+    background-color:#ddd;
     width:500pt;
     height:300pt;
     margin-top:18pt;
@@ -17,7 +17,7 @@ body {
     text-align:center;
     font-family:arial;
     font-size:12pt;
-    background-color:#000000;
+    background-color:#333399;
     color:white;
     margin-top:0;
     margin-bottom:0pt;
@@ -29,7 +29,7 @@ body {
     position:absolute;
     left:174pt;
     top:50pt;
-    background-color:rgb(40, 166, 197);
+    background-color:white;
     -webkit-box-shadow: inset 2px 2px 2px #666;
     -moz-box-shadow: inset 2px 2px 2px #666;
 }
@@ -40,55 +40,58 @@ body {
     2px 2px #666; -moz-box-shadow: inset 2px 2px 2px #666;
 }
 
+#objectdiv {
+    margin-top:6pt;
+    margin-left:0.2in;
+    margin-right:auto;
+    margin-bottom:-12pt;
+}
+
+.option {
+    margin:0pt;
+    font-size:90%;
+}
+
 #sliderdiv {
-    margin-top:.6in;
+    margin-top:18pt;
     margin-left:.2in;
     margin-right:.2in;
 }
 
-#slidertitle {
-    margin-top:0pt;
-    margin-bottom:24pt;
-    font-weight:bold;
-    text-align:center;
-    font-size:120%;
-}
-
-#slider1 {
-    position:relative;
+#zoomSlider {
     width:105px;
-    top:-16px;
-    left:-4pt;
+    margin-top:6pt;
+    margin-left:-4pt;
 }
 
-#pointcountpar {
-    position:relative;
+#perspectiveSlider {
+    width:105px;
+    margin-top:-10pt;
+    margin-left:-4pt;
+}
+
+#zoompar {
     font-size:90%;
-    top:-24pt;
+    margin-top:-3pt;
     text-align:center;
 }
 
-#drawbutton {
-    font-size:130%;
-    margin-left:10%;
-    margin-top:10pt;
-    
-    /* margin-bottom: 10pt; */
-}
-
-#erasebutton {
-    font-size:130%;
-    margin-left: 10%;
-    margin-top:10%;
+#perspectivepar {
+    font-size:90%;
+    margin-top:-3pt;
+    text-align:center;
 }
 
 /* box for debugging output */
 #messageWindow {
+    position:absolute;
+    top: -000pt;
+    left: 530pt;
     border: solid black 1px;
     margin-left:20pt;
-    margin-top: 22pt;
-    width: 500pt;
-    height: 100pt;
+    margin-top: 20pt;
+    width: 210pt;
+    height: 300pt;
     background-color:#FF9;
     overflow: auto;
 }
@@ -99,5 +102,4 @@ body {
     font-family:courier;
     overflow: auto;
 }
-
 
